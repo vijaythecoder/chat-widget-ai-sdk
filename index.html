@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Widget AI SDK - Development</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .setup {
+      background: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    input {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: 300px;
+      margin-right: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      background: #0070f3;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0051cc;
+    }
+    .error {
+      color: #d32f2f;
+      margin-top: 10px;
+    }
+    .success {
+      color: #2e7d32;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 id="main-title">Chat Widget AI SDK - Development Mode</h1>
+    
+    <div class="setup">
+      <h2>Setup</h2>
+      <p>Enter your OpenAI API key to start testing the widget:</p>
+      
+      <div>
+        <input 
+          type="password" 
+          id="apiKey" 
+          placeholder="sk-..." 
+          onkeypress="if(event.key==='Enter') initWidget()"
+        />
+        <button onclick="initWidget()">Initialize Widget</button>
+      </div>
+      
+      <div id="status"></div>
+    </div>
+
+    <div>
+      <h2>Instructions</h2>
+      <ol>
+        <li>Get your OpenAI API key from <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a></li>
+        <li>Enter the key above and click "Initialize Widget"</li>
+        <li>The chat widget will appear in the bottom-right corner</li>
+        <li>Try asking to modify elements, change colors, add content, or highlight sections</li>
+        <li>Open the browser console to see tool invocations</li>
+      </ol>
+    </div>
+
+    <div class="demo-section" style="margin-top: 30px; padding: 20px; background: #f0f0f0; border-radius: 8px;">
+      <h2 id="demo-title">Demo Section</h2>
+      <p id="demo-text">This is a demo paragraph that you can ask the AI to modify.</p>
+      <button id="demo-button" style="padding: 10px 20px; margin: 10px 0;">Click Me</button>
+      <div id="demo-container" style="margin-top: 20px;">
+        <p>Try these example prompts:</p>
+        <ul id="example-list">
+          <li>"Change the title to say 'AI-Powered DOM Manipulation'"</li>
+          <li>"Make the demo button red and larger"</li>
+          <li>"Add a new paragraph after the button"</li>
+          <li>"Highlight all the list items with a glow effect"</li>
+          <li>"Remove the demo paragraph"</li>
+          <li>"Change the background color of the demo section to light blue"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="root"></div>
+  </div>
+
+  <script type="module">
+    import ChatWidgetSDK from './src/index.ts';
+    
+    window.initWidget = function() {
+      const apiKey = document.getElementById('apiKey').value || 'sk-REPLACE_WITH_YOUR_ACTUAL_API_KEY';
+      const statusEl = document.getElementById('status');
+      
+      if (!apiKey || apiKey === 'sk-REPLACE_WITH_YOUR_ACTUAL_API_KEY') {
+        statusEl.innerHTML = '<div class="error">Please replace the placeholder API key in dev.html with your actual OpenAI API key</div>';
+      }
+      
+      try {
+        ChatWidgetSDK.init({
+          apiKey,
+          tools: true,
+          theme: 'light',
+          position: 'bottom-right',
+          welcomeMessage: 'Hello! I can help you modify elements on this webpage. Try asking me to change text, add new elements, style components, or highlight sections!'
+        });
+        
+        statusEl.innerHTML = '<div class="success">✓ Widget initialized successfully! Look for it in the bottom-right corner.</div>';
+        
+        // Store in localStorage for convenience
+        localStorage.setItem('openai_api_key', apiKey);
+      } catch (error) {
+        statusEl.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+      }
+    };
+    
+    // Auto-load from localStorage if available
+    window.addEventListener('load', () => {
+      const savedKey = localStorage.getItem('openai_api_key');
+      if (savedKey) {
+        document.getElementById('apiKey').value = savedKey;
+      }
+      
+      // Auto-initialize with placeholder for development
+      // IMPORTANT: Replace 'sk-REPLACE_WITH_YOUR_ACTUAL_API_KEY' with your actual API key
+      setTimeout(() => {
+        const apiKey = 'sk-REPLACE_WITH_YOUR_ACTUAL_API_KEY';
+        ChatWidgetSDK.init({
+          apiKey,
+          tools: true,
+          theme: 'light',
+          position: 'bottom-right',
+          welcomeMessage: 'Hello! I can help you modify elements on this webpage. Try asking me to change text, add new elements, style components, or highlight sections!'
+        });
+        console.log('Widget initialized with placeholder API key. Replace it in dev.html line 136');
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
